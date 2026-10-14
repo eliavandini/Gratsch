@@ -28,7 +28,7 @@
     text(
       meta.course-name,
       size: 36pt,
-      font: ("Libertinus Serif"),
+      font: "Libertinus Serif",
       baseline: -0.6em,
     ),
   )
@@ -39,7 +39,7 @@
     box([
       #set text(
         size: 20pt,
-        font: ("Libertinus Serif"),
+        font: "Libertinus Serif",
         baseline: 1em,
       )
       #set align(horizon)
@@ -48,17 +48,22 @@
   )
 }
 
-#let simple-title(meta, logo) = {
+#let simple-title(
+  meta,
+  logo,
+  header-image-width: 30%,
+  stack-spacing: 8pt,
+) = {
   set align(horizon)
   stack(
     dir: ltr,
-    spacing: 8pt,
+    spacing: stack-spacing,
     {
-      set image(width: 30%)
+      set image(width: header-image-width)
       logo
     },
     context line(
-      length: 20% * page.width,
+      length: 82pt,
       angle: 90deg,
       stroke: (
         thickness: 0.8pt,
@@ -66,25 +71,21 @@
       ),
     ),
     {
-      set align(left)
-      block[
-        #set text(font: (
-          "New Computer Modern",
-          "Libertinus Serif",
-        ))
+      stack(
+        spacing: 10pt,
 
-        #text(size: 28pt, weight: "bold")[
+        text(size: 24pt, weight: "bold")[
           #meta.course-name
-        ]
+        ],
 
-        #text(size: 18pt)[
+        text(size: 18pt)[
           #meta.subtitle
-        ]
+        ],
 
-        #text(size: 12pt, font: "New Computer Modern")[
+        text(size: 12pt, font: "New Computer Modern")[
           #meta.author-info
-        ]
-      ]
+        ],
+      )
     },
   )
 }
@@ -109,12 +110,25 @@
   ]
 }
 
+
+
 #let theme(meta) = {
+  let header-image-width = if "header-image-width" in meta {
+    meta.header-image-width
+  } else {
+    30%
+  }
+  let stack-spacing = if "stack-spacing" in meta {
+    meta.stack-spacing
+  } else {
+    8pt
+  }
   let logo = if "logo" in meta {
     meta.logo
   } else {
-    image(logo_path)
+    image(logo_path, width: 100pt)
   }
+
   return (
     title: (
       whole-page: {
@@ -123,26 +137,53 @@
       },
       simple: {
         set align(left)
-        block(simple-title(meta, logo))
+        block(
+          simple-title(
+            meta,
+            logo,
+            header-image-width: header-image-width,
+            stack-spacing: stack-spacing,
+          ),
+        )
       },
     ),
+
     page-setting: (
       header: header(meta),
       footer: footer(meta),
     ),
+
     fonts: (
-      heading: (
-        "New Computer Modern",
-        "Libertinus Serif",
-      ),
-      text: (
-        "New Computer Modern",
-        "Libertinus Serif",
-      ),
-      equation: (
-        "New Computer Modern Math",
-        "Libertinus Serif",
-      ),
+      heading: ("New Computer Modern",),
+      text: ("New Computer Modern",),
+      equation: ("New Computer Modern Math",),
     ),
+
+    styles: doc => {
+      set text(size: 10pt)
+      set par(
+        leading: 0.65em,
+        spacing: 0.5em,
+      )
+      show par: it => block(
+        inset: (left: 22pt),
+      )[
+        #it
+      ]
+
+      show heading.where(level: 1): it => {
+        set text(size: 13pt, weight: "bold", style: "italic", fill: rgb("#0c3a6f"))
+        block(above: 2em, below: 0.5em)[#it]
+      }
+
+      show heading.where(level: 2): it => {
+        set text(size: 10pt, weight: "bold", fill: rgb("#3d81e7"))
+        block(above: 1em, below: 0.8em)[#it]
+      }
+
+      show heading.where(level: 3): set text(size: 10pt, weight: "bold")
+
+      doc
+    },
   )
 }

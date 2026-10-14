@@ -119,6 +119,8 @@ The library exposes two functions — `config` and `prob`.
   `course-name`, `str`, `none`, [Course name. Must be explicitly provided. Use `""` for empty.],
   `author-names`, `str | array`, `""`, [Author names (list), used for document metadata. Defaults to `""`],
   `lang`, `str | none`, `"en"`, [`en`, `zh`, or `none`],
+  `header-image-width`, `length`, `30%`, [Width of the image in the sketch theme's simple title.],
+  `stack-spacing`, `length`, `8pt`, [Spacing between the elements in the sketch theme's simple title.],
 )
 
 === Usage

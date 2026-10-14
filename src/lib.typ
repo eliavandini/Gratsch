@@ -1,4 +1,4 @@
-#import "@preview/linguify:0.4.2": load_ftl_data, linguify
+#import "@preview/linguify:0.4.2": linguify, load_ftl_data
 #import "@preview/numbly:0.1.0": numbly
 #import "@preview/valkyrie:0.2.2" as z
 
@@ -47,18 +47,18 @@
     lang: lang,
     ..opt.named(),
   )
-  
+
   title-style = z.parse(title-style, model.title-style)
   lang = z.parse(lang, model.lang)
   meta = opt.named() + z.parse(meta, model.meta-schema)
   z.parse(theme-name, model.theme-name)
-  
+
   let theme = model.get-theme(theme-name)
   theme = z.parse(theme(meta), model.theme-schema, scope: (theme-name,))
   if custom-theme != none {
     theme = z.parse(custom-theme(meta), model.theme-schema, scope: ("custom-theme",))
   }
-  
+
   let num-func = if type(heading-numberings) == array {
     numbly(..heading-numberings)
   } else if type(heading-numberings) == function {
@@ -66,38 +66,38 @@
   } else {
     assert(false, "Invalid heading numbering type")
   }
-  
+
   return {
     // Document metadata
     set document(
       title: meta.course-name + "-" + meta.subtitle,
       author: meta.author-names,
     )
-    
+
     // Heading numbering
     set heading(numbering: num-func)
 
     // Document language
     set text(lang: lang)
-    
+
     // Page header & footer
     set page(
       header: theme.page-setting.header,
       footer: theme.page-setting.footer,
     )
-    
+
     // Fonts
     set text(font: theme.fonts.text)
     show heading: set text(font: theme.fonts.heading)
     show math.equation: set text(font: theme.fonts.equation)
-    
+
     // Title
     title-content(meta, theme, title-style)
-    
+
     if title-style == "whole-page" {
       counter(page).update(x => x - 1)
     }
-    
+
     (theme.styles)(doc)
   }
 }
